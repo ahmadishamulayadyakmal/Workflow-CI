@@ -1,16 +1,16 @@
 """
-modelling.py – Kriteria 3: Workflow CI dengan MLflow Project
+modelling.py - Kriteria 3: Workflow CI dengan MLflow Project
 =============================================================
-Dataset  : Teen Mental Health Dataset (sudah dipreproses – Kriteria 1)
+Dataset  : Teen Mental Health Dataset (sudah dipreproses - Kriteria 1)
 Target   : depression_risk  (multiclass: 0=low / 1=medium / 2=high)
-Model    : RandomForestClassifier (autolog MLflow – Kriteria 2)
+Model    : RandomForestClassifier (autolog MLflow - Kriteria 2)
 CI       : Dijalankan otomatis via GitHub Actions + MLflow Project
 
 Hubungan antar Kriteria
 -----------------------
-Kriteria 1  →  menghasilkan Teen_Mental_Health_preprocessing.csv
-Kriteria 2  →  modelling.py ini (autolog, tanpa hyperparameter tuning)
-Kriteria 3  →  mengemas modelling.py ke dalam MLProject + GitHub Actions CI
+Kriteria 1  ->  menghasilkan Teen_Mental_Health_preprocessing.csv
+Kriteria 2  ->  modelling.py ini (autolog, tanpa hyperparameter tuning)
+Kriteria 3  ->  mengemas modelling.py ke dalam MLProject + GitHub Actions CI
 """
 
 import os
@@ -27,6 +27,9 @@ warnings.filterwarnings("ignore")
 
 # ------------------------------------------------------------------ #
 # 1. Konfigurasi MLflow                                               #
+#    set_experiment hanya berlaku saat run lokal.                     #
+#    Saat dipanggil via 'mlflow run .', experiment sudah diatur       #
+#    oleh flag --experiment-name di mlflow-ci.yml.                    #
 # ------------------------------------------------------------------ #
 mlflow.set_experiment("Teen-Mental-Health-Depression-Risk")
 
@@ -68,13 +71,27 @@ def prepare_data(df: pd.DataFrame):
 
 
 # ------------------------------------------------------------------ #
-# 4. Training dengan MLflow autolog (Basic – Kriteria 2)              #
+# 4. Training dengan MLflow autolog (Basic - Kriteria 2)              #
 # ------------------------------------------------------------------ #
 def train_model(X_train, X_test, y_train, y_test):
-    # Aktifkan autolog scikit-learn → parameter + metrik + model tersimpan otomatis
     mlflow.sklearn.autolog()
 
-    with mlflow.start_run(run_name="RandomForest-CI"):
+    # ------------------------------------------------------------------
+    # Deteksi apakah script dijalankan via 'mlflow run .' (CI) atau
+    # langsung (lokal). Saat via 'mlflow run .', MLflow Project sudah
+    # membuat run dan menyimpan run_id-nya di env var MLFLOW_RUN_ID.
+    # Kita REUSE run tersebut agar tidak terjadi run ID conflict.
+    # Saat run lokal, active_run() = None sehingga kita buat run baru.
+    # ------------------------------------------------------------------
+    active = mlflow.active_run()
+
+    run_kwargs = (
+        {"run_id": active.info.run_id}   # CI: pakai run yang sudah ada
+        if active
+        else {"run_name": "RandomForest-CI"}  # Lokal: buat run baru
+    )
+
+    with mlflow.start_run(**run_kwargs):
         model = RandomForestClassifier(
             n_estimators=100,
             max_depth=10,
