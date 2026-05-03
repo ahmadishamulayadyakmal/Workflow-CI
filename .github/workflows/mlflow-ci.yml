@@ -1,0 +1,55 @@
+name: MLflow CI - Teen Mental Health
+
+# ============================================================
+# Trigger: workflow ini berjalan saat:
+#   1. Push ke branch main
+#   2. Pull Request ke branch main
+#   3. Manual dispatch (tombol "Run workflow" di GitHub)
+# ============================================================
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+      # --------------------------------------------------------
+      # Step 1: Ambil kode dari repository
+      # --------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # --------------------------------------------------------
+      # Step 2: Setup Python (versi sama dengan conda.yaml)
+      # --------------------------------------------------------
+      - name: Setup Python 3.12.7
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.7"
+
+      # --------------------------------------------------------
+      # Step 3: Install dependensi (versi sinkron dengan conda.yaml)
+      # --------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            mlflow==2.19.0 \
+            scikit-learn==1.6.0 \
+            pandas==2.2.2 \
+            numpy==2.2.1 \
+            joblib==1.4.2
+
+      # --------------------------------------------------------
+      # Step 4: Jalankan MLflow Project (entry point: modelling.py)
+      #         Model akan dilatih ulang setiap trigger dipantik
+      # --------------------------------------------------------
+      - name: Run MLflow Project
+        working-directory: MLProject
+        run: |
+          mlflow run . --env-manager=local
