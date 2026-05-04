@@ -1,0 +1,32 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.10
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+mlflow_version: 2.19.0
+model_size_bytes: 2861463
+model_uuid: e368fe3e016c4ce58489c46952565919
+run_id: a2945d037d474a72ba23cf951d4ff2c4
+signature:
+  inputs: '[{"type": "double", "name": "age", "required": true}, {"type": "long",
+    "name": "gender", "required": true}, {"type": "double", "name": "daily_social_media_hours",
+    "required": true}, {"type": "long", "name": "platform_usage", "required": true},
+    {"type": "double", "name": "sleep_hours", "required": true}, {"type": "double",
+    "name": "screen_time_before_sleep", "required": true}, {"type": "double", "name":
+    "academic_performance", "required": true}, {"type": "double", "name": "physical_activity",
+    "required": true}, {"type": "long", "name": "social_interaction_level", "required":
+    true}, {"type": "double", "name": "stress_level", "required": true}, {"type":
+    "double", "name": "anxiety_level", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2026-05-03 03:11:15.094837'

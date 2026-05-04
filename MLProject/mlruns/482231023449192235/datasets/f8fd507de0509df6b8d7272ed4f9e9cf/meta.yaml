@@ -1,0 +1,15 @@
+digest: 7b5731bc
+name: dataset
+profile: '{"num_rows": 2000, "num_elements": 22000}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "age", "required": true},
+  {"type": "long", "name": "gender", "required": true}, {"type": "double", "name":
+  "daily_social_media_hours", "required": true}, {"type": "long", "name": "platform_usage",
+  "required": true}, {"type": "double", "name": "sleep_hours", "required": true},
+  {"type": "double", "name": "screen_time_before_sleep", "required": true}, {"type":
+  "double", "name": "academic_performance", "required": true}, {"type": "double",
+  "name": "physical_activity", "required": true}, {"type": "long", "name": "social_interaction_level",
+  "required": true}, {"type": "double", "name": "stress_level", "required": true},
+  {"type": "double", "name": "anxiety_level", "required": true}]}'
+source: '{"tags": {"mlflow.user": "R9000P", "mlflow.source.name": "modelling.py",
+  "mlflow.source.type": "LOCAL", "mlflow.source.git.commit": "01b05b23de1edd6cc784e871bb4539cf63386f93"}}'
+source_type: code
